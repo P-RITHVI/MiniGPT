@@ -1,0 +1,10 @@
+Language models learn to predict the next token from the tokens that came before it.
+A small decoder reads a sequence, builds useful representations, and predicts what may follow.
+Attention lets each position use earlier context while a causal mask blocks every future position.
+The training objective is next-token cross entropy, and gradients update the model parameters.
+Repeated practice can lower training loss, but a tiny text collection is easy to memorize.
+Validation data helps compare checkpoints, while a held out test split is reserved for final evaluation.
+Character tokens make the vocabulary transparent, though spelling and long contexts need many steps.
+This educational model runs on a processor and demonstrates the mechanics of a GPT style network.
+It is not a production assistant, it does not browse, and it cannot verify facts in generated text.
+Good experiments record the dataset, configuration, random seed, losses, and training duration.
