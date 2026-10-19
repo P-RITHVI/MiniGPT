@@ -1,5 +1,4 @@
 import argparse
-import json
 from pathlib import Path
 import sys
 import re
@@ -35,11 +34,5 @@ def main():
         text=source.read_text(encoding="utf-8-sig")
     if not text.strip(): raise SystemExit("Input text is empty")
     out=Path(args.output); out.parent.mkdir(parents=True,exist_ok=True); out.write_text(text,encoding="utf-8")
-    config_path=Path("configs/default.json")
-    if config_path.is_file():
-        config=json.loads(config_path.read_text(encoding="utf-8"))
-        config["data_path"]=out.as_posix()
-        config_path.write_text(json.dumps(config,indent=2)+"\n",encoding="utf-8")
     print(f"Wrote {len(text)} characters to {out}")
-    if config_path.is_file(): print(f"Updated data_path in {config_path}")
 if __name__=="__main__": main()

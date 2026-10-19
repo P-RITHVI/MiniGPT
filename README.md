@@ -43,11 +43,11 @@ Alternatively, prepare a local UTF-8 text file:
 python scripts/prepare_data.py --input PATH_TO_TEXT_FILE --output data/corpus.txt
 ```
 
-The preparation script updates `data_path` in `configs/default.json` to the output file. Review the config and optionally adjust other hyperparameters, then run:
+Train directly against the prepared corpus (the default config and offline smoke flow remain unchanged), then evaluate the resulting checkpoint:
 
 ```powershell
-python scripts/train.py --config configs/default.json
-python scripts/train.py --config configs/default.json --steps 10
+python scripts/train.py --config configs/default.json --data data/corpus.txt
+python scripts/train.py --config configs/default.json --data data/corpus.txt --steps 10
 python scripts/evaluate.py --checkpoint artifacts/minigpt.pt
 python scripts/generate.py --checkpoint artifacts/minigpt.pt --prompt "Language models" --greedy
 ```
