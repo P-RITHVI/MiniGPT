@@ -22,10 +22,11 @@ def train(config, data_path=None, steps=None):
     tokenizer=CharTokenizer.train(train_text) if config.tokenizer_type == "char" else BPETokenizer.train(train_text, config.tokenizer_vocab_size)
     train_data=NextTokenDataset(tokenizer.encode(train_text),config.block_size); val_data=NextTokenDataset(tokenizer.encode(val_text),config.block_size)
     if not len(train_data) or not len(val_data): raise ValueError("Train and validation splits must each exceed block_size")
-    config.vocab_size=tokenizer.vocab_size; config.validate(); model=GPTLanguageModel(config).to(config.device)
-    optimizer=torch.optim.AdamW(model.parameters(),lr=config.learning_rate,weight_decay=config.weight_decay)
+    config.vocab_size=tokenizer.vocab_size
     run_steps=steps if steps is not None else config.steps
     if run_steps < 1: raise ValueError("steps must be positive")
+    config.steps=run_steps; config.validate(); model=GPTLanguageModel(config).to(config.device)
+    optimizer=torch.optim.AdamW(model.parameters(),lr=config.learning_rate,weight_decay=config.weight_decay)
     history=[]; best_val=float("inf"); best_step=0; best_state=None
     start=time.perf_counter(); model.train()
     for step in range(1,run_steps+1):
