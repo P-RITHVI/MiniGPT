@@ -37,6 +37,8 @@ The bundled `data/tiny_corpus.txt` is original educational text included for off
 python scripts\prepare_data.py --alice --output data\corpus.txt
 ```
 
+If Python reports a certificate error, download the **Plain Text UTF-8** file from the [official book page](https://www.gutenberg.org/ebooks/11) in your browser, save it as `data\alice_raw.txt`, then run `python scripts\prepare_data.py --input data\alice_raw.txt --output data\corpus.txt`. The script recognizes and removes the Gutenberg wrapper in that local file too. Do not disable certificate verification.
+
 Alternatively, prepare a local UTF-8 text file:
 
 ```powershell

@@ -32,6 +32,8 @@ def main():
         source=Path(args.input)
         if not source.is_file(): raise SystemExit(f"Input file does not exist: {source}")
         text=source.read_text(encoding="utf-8-sig")
+        if re.search(r"\*\*\* START OF (?:THE )?PROJECT GUTENBERG EBOOK",text,re.I):
+            text=extract_gutenberg_body(text)
     if not text.strip(): raise SystemExit("Input text is empty")
     out=Path(args.output); out.parent.mkdir(parents=True,exist_ok=True); out.write_text(text,encoding="utf-8")
     print(f"Wrote {len(text)} characters to {out}")
