@@ -15,7 +15,7 @@ def main():
     baseline=BigramBaseline().fit([tok.encode(train_text)],tok.vocab_size)
     import math, json
     baseline_loss=baseline.loss([tok.encode(test)])
-    result={"model":"MiniGPT","test":test_metrics,"baseline":{"name":"smoothed character bigram","test_loss":baseline_loss,"perplexity":math.exp(baseline_loss)},"training_history":extra.get("history",[])}
+    result={"model":"MiniGPT","test":test_metrics,"baseline":{"name":"smoothed token bigram","test_loss":baseline_loss,"perplexity":math.exp(baseline_loss)},"training_history":extra.get("history",[])}
     output=Path(a.checkpoint).with_name("evaluation.json"); output.write_text(json.dumps(result,indent=2),encoding="utf-8")
     print(result)
 def cpu_device(): return "cpu"

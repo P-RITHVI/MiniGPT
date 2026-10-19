@@ -6,6 +6,8 @@ from pathlib import Path
 @dataclass
 class Config:
     vocab_size: int = 0
+    tokenizer_type: str = "char"
+    tokenizer_vocab_size: int = 512
     block_size: int = 64
     d_model: int = 64
     n_heads: int = 4
@@ -28,6 +30,8 @@ class Config:
         if self.vocab_size < 0 or self.block_size < 1 or self.d_model < 1 or self.n_heads < 1 or self.n_layers < 1:
             raise ValueError("Model dimensions must be positive and vocab_size nonnegative")
         if self.d_model % self.n_heads: raise ValueError("d_model must be divisible by n_heads")
+        if self.tokenizer_type not in {"char", "bpe"}: raise ValueError("tokenizer_type must be 'char' or 'bpe'")
+        if self.tokenizer_vocab_size < 2: raise ValueError("tokenizer_vocab_size must be at least 2")
         if not 0 <= self.dropout < 1: raise ValueError("dropout must be in [0, 1)")
         if self.learning_rate <= 0 or self.batch_size < 1 or self.steps < 1: raise ValueError("Training parameters must be positive")
     @classmethod

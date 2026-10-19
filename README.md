@@ -15,7 +15,7 @@ flowchart LR
   G --> H[Next-character logits]
 ```
 
-The deterministic character vocabulary is built from training text only. Unknown characters map to ID 0. Each training example shifts targets by one character. Causal attention masks future characters, uses scaled dot products, and combines multiple heads. See [architecture](docs/architecture.md), [training](docs/training.md), [evaluation](docs/evaluation.md), and [limitations](docs/limitations.md).
+The default deterministic character vocabulary is built from training text only. The optional byte-pair tokenizer learns frequent adjacent pieces from training text, reducing sequence length while preserving the source text. Each training example shifts targets by one token. Causal attention masks future tokens, uses scaled dot products, and combines multiple heads. See [architecture](docs/architecture.md), [training](docs/training.md), [evaluation](docs/evaluation.md), and [limitations](docs/limitations.md).
 
 ## Setup (Windows PowerShell)
 
@@ -54,7 +54,28 @@ python scripts/evaluate.py --checkpoint artifacts/alice/minigpt.pt
 python scripts/generate.py --checkpoint artifacts/alice/minigpt.pt --prompt "Language models" --greedy
 ```
 
+For a stronger experiment, use the optional BPE configuration. It learns up to 512 subword pieces from the training split, uses a 128-token context, a 3-layer 96-dimensional model, and trains for 3,000 steps. CPU training took about ten minutes on the tested environment. Training selects the best validation checkpoint. Alice alone is still a small educational corpus, not enough to train a general-purpose language model:
+
+```bat
+python scripts/train.py --config configs/alice_bpe.json --data data/corpus.txt --output-dir artifacts/alice_bpe
+python scripts/evaluate.py --checkpoint artifacts/alice_bpe/minigpt.pt
+python scripts/generate.py --checkpoint artifacts/alice_bpe/minigpt.pt --prompt "Alice" --tokens 100 --temperature 0.8 --top-k 20 --seed 1337
+```
+
+For a more varied corpus, download the **Plain Text UTF-8** files from [Sherlock Holmes](https://www.gutenberg.org/ebooks/1661), [Tom Sawyer](https://www.gutenberg.org/ebooks/74), and [Pride and Prejudice](https://www.gutenberg.org/ebooks/1342), save them as `data\sherlock_raw.txt`, `data\tom_sawyer_raw.txt`, and `data\pride_prejudice_raw.txt`, and combine with Alice:
+
+```bat
+python scripts\prepare_data.py --input data\alice_raw.txt --input data\sherlock_raw.txt --input data\tom_sawyer_raw.txt --input data\pride_prejudice_raw.txt --output data\corpus_multi.txt
+python scripts\train.py --config configs\alice_bpe.json --data data\corpus_multi.txt --output-dir artifacts\multi_book_bpe
+python scripts\evaluate.py --checkpoint artifacts\multi_book_bpe\minigpt.pt --data data\corpus_multi.txt
+python scripts\generate.py --checkpoint artifacts\multi_book_bpe\minigpt.pt --prompt "Alice" --tokens 100 --temperature 0.8 --top-k 20
+```
+
+Project Gutenberg labels those books public domain in the USA; check local laws before use or redistribution. Its license explains terms for users outside the USA. See [data provenance and terms](data/README.md).
+
 Generation truncates old context to the configured window, supports greedy decoding, temperature and top-k. Checkpoints and generated metrics are local and ignored by Git. Evaluation must be run on the unchanged corpus used during training to reproduce its split convention.
+
+Measured on the single Alice corpus in the CPU environment: token-level test loss 2.5673 (perplexity 13.03) versus the same-tokenization bigram baseline at 3.4539 (perplexity 31.62). The model has 376,224 parameters and took 619.7 seconds; its best sampled validation loss was 2.4848 at step 2,750. These token-level scores cannot be directly compared to the character-level experiment above. Fixed-seed outputs from three prompts are in [the sample log](docs/alice_bpe_samples.txt). They imitate some book-like punctuation and dialogue but still have spelling and grammar errors; this is not fluent text generation. The single-book corpus remains the main data limitation. The measured per-step history is tracked in [the BPE training CSV](docs/alice_bpe_training_history.csv); the checkpoint stays local and is not included in Git.
 
 ## Measured results
 

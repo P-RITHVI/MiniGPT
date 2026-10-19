@@ -5,7 +5,7 @@ import torch
 from .checkpoint import save_checkpoint
 from .dataset import NextTokenDataset, random_batch, split_text
 from .model import GPTLanguageModel
-from .tokenizer import CharTokenizer
+from .tokenizer import CharTokenizer, BPETokenizer
 
 def evaluate(model,dataset,config):
     model.eval(); losses=[]
@@ -19,7 +19,7 @@ def train(config, data_path=None, steps=None):
     if config.device.startswith("cuda") and not torch.cuda.is_available(): raise RuntimeError("CUDA requested but unavailable")
     text=Path(data_path or config.data_path).read_text(encoding="utf-8")
     train_text,val_text,_=split_text(text)
-    tokenizer=CharTokenizer.train(train_text)
+    tokenizer=CharTokenizer.train(train_text) if config.tokenizer_type == "char" else BPETokenizer.train(train_text, config.tokenizer_vocab_size)
     train_data=NextTokenDataset(tokenizer.encode(train_text),config.block_size); val_data=NextTokenDataset(tokenizer.encode(val_text),config.block_size)
     if not len(train_data) or not len(val_data): raise ValueError("Train and validation splits must each exceed block_size")
     config.vocab_size=tokenizer.vocab_size; config.validate(); model=GPTLanguageModel(config).to(config.device)

@@ -1,0 +1,21 @@
+{
+  "vocab_size": 0,
+  "tokenizer_type": "bpe",
+  "tokenizer_vocab_size": 512,
+  "block_size": 128,
+  "d_model": 96,
+  "n_heads": 4,
+  "n_layers": 3,
+  "dropout": 0.15,
+  "learning_rate": 0.0006,
+  "batch_size": 16,
+  "steps": 3000,
+  "eval_interval": 250,
+  "eval_batches": 10,
+  "weight_decay": 0.01,
+  "grad_clip": 1.0,
+  "seed": 1337,
+  "device": "cpu",
+  "data_path": "data/corpus.txt",
+  "output_dir": "artifacts/alice_bpe"
+}
