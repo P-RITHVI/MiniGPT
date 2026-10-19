@@ -46,10 +46,10 @@ python scripts/prepare_data.py --input PATH_TO_TEXT_FILE --output data/corpus.tx
 Train directly against the prepared corpus (the default config and offline smoke flow remain unchanged), then evaluate the resulting checkpoint:
 
 ```powershell
-python scripts/train.py --config configs/default.json --data data/corpus.txt
-python scripts/train.py --config configs/default.json --data data/corpus.txt --steps 10
-python scripts/evaluate.py --checkpoint artifacts/minigpt.pt
-python scripts/generate.py --checkpoint artifacts/minigpt.pt --prompt "Language models" --greedy
+python scripts/train.py --config configs/default.json --data data/corpus.txt --output-dir artifacts/alice
+python scripts/train.py --config configs/default.json --data data/corpus.txt --output-dir artifacts/alice --steps 10
+python scripts/evaluate.py --checkpoint artifacts/alice/minigpt.pt
+python scripts/generate.py --checkpoint artifacts/alice/minigpt.pt --prompt "Language models" --greedy
 ```
 
 Generation truncates old context to the configured window, supports greedy decoding, temperature and top-k. Checkpoints and generated metrics are local and ignored by Git. Evaluation must be run on the unchanged corpus used during training to reproduce its split convention.
