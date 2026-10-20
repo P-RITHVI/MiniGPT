@@ -7,7 +7,7 @@
   "dropout": 0.1,
   "learning_rate": 0.001,
   "batch_size": 16,
-  "steps": 300,
+  "steps": 3000,
   "eval_interval": 50,
   "eval_batches": 10,
   "weight_decay": 0.01,
