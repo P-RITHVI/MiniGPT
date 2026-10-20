@@ -75,6 +75,15 @@ Project Gutenberg labels those books public domain in the USA; check local laws 
 
 Generation truncates old context to the configured window, supports greedy decoding, temperature and top-k. Checkpoints and generated metrics are local and ignored by Git. Evaluation must be run on the unchanged corpus used during training to reproduce its split convention.
 
+### Want more fluent generation?
+
+The from-scratch MiniGPT is the educational model and remains available with the commands above. For more fluent text, install dependencies and use the separate pretrained DistilGPT2 generator. It downloads its model on the first run and needs internet access then; see [pretrained generation](docs/pretrained_generation.md) for setup, options, and limitations:
+
+```bat
+python -m pip install -r requirements.txt
+python scripts\generate_pretrained.py --prompt "Alice was beginning to get very tired of sitting by her sister on the bank" --tokens 100 --temperature 0.8 --top-k 50 --seed 1337
+```
+
 Measured on the single Alice corpus in the CPU environment: token-level test loss 2.5673 (perplexity 13.03) versus the same-tokenization bigram baseline at 3.4539 (perplexity 31.62). The model has 376,224 parameters and took 619.7 seconds; its best sampled validation loss was 2.4848 at step 2,750. These token-level scores cannot be directly compared to the character-level experiment above. Fixed-seed outputs from three prompts are in [the sample log](docs/alice_bpe_samples.txt). They imitate some book-like punctuation and dialogue but still have spelling and grammar errors; this is not fluent text generation. The single-book corpus remains the main data limitation. The measured per-step history is tracked in [the BPE training CSV](docs/alice_bpe_training_history.csv); the checkpoint stays local and is not included in Git.
 
 The four-book corpus contains 1,828,252 characters. On it, the 3,000-step BPE model reached test loss 2.5357 (perplexity 12.63), beating its token-level bigram baseline at 3.0804 (perplexity 21.77). Extending training to 6,000 steps improved test loss to 2.3073 (perplexity 10.05) against the same baseline. The larger run has 377,376 parameters and took 1,084.9 seconds; best validation loss was 2.3249 at step 5,500. These scores are specific to the four-book mixture and cannot be directly compared with the Alice-only test score. Fixed-seed samples are in the [3,000-step sample log](docs/multi_book_bpe_samples.txt) and [6,000-step sample log](docs/multi_book_bpe_6000_samples.txt). Longer training improved the loss but generation still contains malformed words and sentences; this project does not yet generate correct fluent text. The [3,000-step history](docs/multi_book_bpe_training_history.csv) and [6,000-step history](docs/multi_book_bpe_6000_training_history.csv) record the measured evaluations.
