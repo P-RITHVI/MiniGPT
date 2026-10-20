@@ -77,11 +77,11 @@ Generation truncates old context to the configured window, supports greedy decod
 
 ### Want more fluent generation?
 
-The from-scratch MiniGPT is the educational model and remains available with the commands above. For more fluent text, install dependencies and use the separate pretrained DistilGPT2 generator. It downloads its model on the first run and needs internet access then; see [pretrained generation](docs/pretrained_generation.md) for setup, options, and limitations:
+The from-scratch MiniGPT is the educational model and remains available with the commands above. For instruction-following generation, use the separate pretrained Qwen2.5-0.5B-Instruct model. It downloads about 988 MB on the first run and needs internet access then; see [pretrained generation](docs/pretrained_generation.md) for setup, options, and limitations:
 
 ```bat
 python -m pip install -r requirements.txt
-python scripts\generate_pretrained.py --prompt "Alice was beginning to get very tired of sitting by her sister on the bank" --tokens 100 --temperature 0.8 --top-k 50 --seed 1337
+python scripts\generate_pretrained.py --prompt "Write a short, coherent fantasy scene about Alice following the White Rabbit into a curious garden. Keep the events consistent and use clear English." --tokens 160 --temperature 0.7 --top-k 40 --top-p 0.9 --seed 1337
 ```
 
 Measured on the single Alice corpus in the CPU environment: token-level test loss 2.5673 (perplexity 13.03) versus the same-tokenization bigram baseline at 3.4539 (perplexity 31.62). The model has 376,224 parameters and took 619.7 seconds; its best sampled validation loss was 2.4848 at step 2,750. These token-level scores cannot be directly compared to the character-level experiment above. Fixed-seed outputs from three prompts are in [the sample log](docs/alice_bpe_samples.txt). They imitate some book-like punctuation and dialogue but still have spelling and grammar errors; this is not fluent text generation. The single-book corpus remains the main data limitation. The measured per-step history is tracked in [the BPE training CSV](docs/alice_bpe_training_history.csv); the checkpoint stays local and is not included in Git.
